@@ -44,69 +44,50 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  static List<String> keyboardLists = <String>[
-    '7',
-    '8',
-    '9',
-    '/',
-    '4',
-    '5',
-    '6',
-    'x',
-    '1',
-    '2',
-    '3',
-    '-',
-    '0',
-    '.',
-    '+/-',
-    '=',
-  ];
+  String _test = "";
 
-  void _incrementCounter() {
+  // tricky to make 2d array in dart
+  static List<String> keys1 = ['7', '8', '9', '/'];
+  static List<String> keys2 = ['4', '5', '6', 'x'];
+  static List<String> keys3 = ['1', '2', '3', '-'];
+  static List<String> keys4 = ['0', '.', '+/-', '='];
+
+  void _incrementCounter(String number) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _test += number;
     });
   }
 
-  Expanded result = new Expanded(
-      flex: 1, child: new Text('We move under xxxxxxxxxx and we move as one'));
-
-  Expanded keyboard = new Expanded(
-      flex: 1,
-      child: new GridView.count(
-          crossAxisCount: 4,
-          children: keyboardLists.map((String number) {
-            return new GridTile(
-                child: new FlatButton(
-                    child:
-                        new Text(number, style: new TextStyle(fontSize: 20.0)),
-                    color: Colors.black.withOpacity(0.1),
-                    onPressed: () {
-                      print('aaa');
-                    }));
-          }).toList()));
+  Row getRow(List<String> keys) {
+    return new Row(
+        children: keys.map((String number) {
+      return new Expanded(
+          child: new FlatButton(
+              color: Colors.black.withOpacity(0.1),
+              onPressed: () {
+                this._incrementCounter(number);
+              },
+              child: new Container(
+                margin: const EdgeInsets.symmetric(vertical: 30.0),
+                child: new Text(number, style: new TextStyle(fontSize: 20.0)),
+              )));
+    }).toList());
+  }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    Expanded result = new Expanded(flex: 1, child: new Text('$_test'));
+
     return new Scaffold(
         appBar: new AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
           title: new Text(widget.title),
         ),
-        body: new Center(
-            child: new Column(children: <Widget>[result, keyboard])));
+        body: new Column(children: <Widget>[
+          result,
+          this.getRow(keys1),
+          this.getRow(keys2),
+          this.getRow(keys3),
+          this.getRow(keys4)
+        ]));
   }
 }
