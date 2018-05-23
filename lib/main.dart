@@ -51,6 +51,12 @@ class PageState extends State<MyHomePage> {
         if (display.length > 0)
           display = display.substring(0, display.length - 1);
         break;
+      case '%':
+        if (display.length > 0) {
+          double value = double.parse(display) / 100;
+          display = value.toString().replaceFirst((new RegExp(r'.0$')), '');
+        }
+        break;
       case 'x':
       case '-':
       case '+':
@@ -58,8 +64,8 @@ class PageState extends State<MyHomePage> {
         currentOpe = input;
         break;
       case '+/-':
-        double a = double.parse(display) * -1;
-        display = a.toString().replaceFirst(('.0'), '');
+        double value = double.parse(display) * -1;
+        display = value.toString().replaceFirst(('.0'), '');
         break;
       case '=':
         calc(display, lastOpe);
