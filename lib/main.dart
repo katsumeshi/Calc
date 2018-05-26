@@ -26,10 +26,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class PageState extends State<MyHomePage> {
-  String display = "";
+  String display = '0';
+  double total = 0.0;
   double val = 0.0;
-  String currentOpe = "";
-  String lastOpe = "";
+  String currentOpe = '';
+  String lastOpe = '';
+  String lastInput = '';
   static const int kMaxLength = 10;
 
   // not sure to make 2d array in dart
@@ -42,10 +44,12 @@ class PageState extends State<MyHomePage> {
   void handleInput(String input) {
     switch (input) {
       case 'AC':
-        display = '';
+        display = '0';
         val = 0.0;
+        total = 0.0;
         currentOpe = '';
         lastOpe = '';
+        lastInput = '';
         break;
       case 'Del':
         if (display.length > 0)
@@ -62,15 +66,26 @@ class PageState extends State<MyHomePage> {
       case '+':
       case '÷':
         currentOpe = input;
+        if (preventMultipleOperatorInput()) break;
+        if (lastOpe == '') {
+          total = double.parse(display);
+          lastOpe = input;
+        } else {
+          val = double.parse(display);
+          calc(currentOpe);
+          display = total.toString().replaceFirst(('.0'), '');
+        }
         break;
       case '+/-':
+        if (display == '0') break;
         double value = double.parse(display) * -1;
         display = value.toString().replaceFirst(('.0'), '');
         break;
       case '=':
-        calc(display, lastOpe);
-        display = val.toString().replaceFirst(('.0'), '');
-        val = 0.0;
+        if (preventMultipleOperatorInput() || currentOpe == '') break;
+        val = double.parse(display);
+        calc(currentOpe);
+        display = total.toString().replaceFirst(('.0'), '');
         break;
       case '.':
         if (display.indexOf('.') == -1) {
@@ -78,10 +93,11 @@ class PageState extends State<MyHomePage> {
         }
         break;
       default:
-        if (currentOpe != '') {
-          calc(display, currentOpe);
+        if (lastInput.contains(new RegExp(r'[-\+÷x]'))) {
+          display = '';
         }
         if (display.length < kMaxLength) {
+          if (display == '0') display = '';
           display += input;
         }
         break;
@@ -89,26 +105,26 @@ class PageState extends State<MyHomePage> {
     if (display.length >= kMaxLength) {
       display = display.substring(0, kMaxLength);
     }
+    lastInput = input;
     setState(() {
       display;
     });
   }
 
-  void calc(strValue, strOperator) {
-    if (val == 0.0) {
-      val = double.parse(strValue);
-    } else if (strOperator == '+') {
-      val += double.parse(strValue);
+  bool preventMultipleOperatorInput() {
+    return lastInput.contains(new RegExp(r'[-\+÷x]'));
+  }
+
+  void calc(strOperator) {
+    if (strOperator == '+') {
+      total += val;
     } else if (strOperator == 'x') {
-      val *= double.parse(strValue);
+      total *= val;
     } else if (strOperator == '-') {
-      val -= double.parse(strValue);
+      total -= val;
     } else if (strOperator == '÷') {
-      val /= double.parse(strValue);
+      total /= val;
     }
-    currentOpe = '';
-    lastOpe = strOperator;
-    display = '';
   }
 
   Row getRow(List<String> keys) {
