@@ -1,8 +1,5 @@
-# calc
+# simple caluclator
 
-A new Flutter project.
+created experimentally this app for using Flutter
 
-## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+ <img src="https://github.com/katsumeshi/calc/blob/master/screenshot.png" height="40%" width="40%">
